@@ -1,11 +1,12 @@
-name: Deploy React app to GitHub Pages
+name: Deploy to GitHub Pages
+
 on:
   push:
     branches:
-      - develop  # Set the branch you want to deploy from
+      - develop   
 
 permissions:
-  contents: read7
+  contents: read   # 👈 corregido (no "red")
   pages: write
   id-token: write
 
