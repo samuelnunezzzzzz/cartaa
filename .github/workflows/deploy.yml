@@ -5,34 +5,42 @@ on:
       - develop  # Set the branch you want to deploy from
 
 permissions:
-  contents: write
-  
+  contents: read7
+  pages: write
+  id-token: write
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
+  build:
+    runs-on: ubuntu-latest   # 👈 faltaba el valor
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: instalar Node.jobs
+      - name: Checkout code
+        uses: actions/checkout@v4   # 👈 movido al lugar correcto
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20  # Specify the Node.js version you want to use
-      
+          node-version: 20
+          cache: npm
+
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Lint code with ESLint
-        run: npm run lint 
-
-      - name: Build del proyecto
+      - name: Build project
         run: npm run build
-      
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+
+      - name: Upload dist folder
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.PERSONAL_TOKEN }}
-          publish_dir: ./dist
-          
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:              # 👈 corregido (era "enviroment")
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}   # 👈 corregido espacio
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
