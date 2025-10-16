@@ -6,7 +6,7 @@ on:
       - develop   
 
 permissions:
-  contents: read   # 👈 corregido (no "red")
+  contents: read  
   pages: write
   id-token: write
 
